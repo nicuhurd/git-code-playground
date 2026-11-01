@@ -1,17 +1,235 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>git Playground</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ghid pentru crearea rapoartelor automate în Excel cu Power Query și Pivot Table.">
+    <title>Crearea de rapoarte automate în Excel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="main.js" defer></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script defer src="main.js"></script>
 </head>
-
 <body>
-    <h1>Hello</h1>
-</body>
+    <a class="skip-link" href="#content">Sari la conținut</a>
+    <aside class="sidebar" aria-label="Navigare în document">
+        <div class="sidebar-heading">
+            <span class="eyebrow">Ghid Excel</span>
+            <h2>Cuprins</h2>
+        </div>
+        <nav id="table-of-contents" aria-label="Cuprinsul documentului">
+            <p class="toc-placeholder">Secțiunile documentului vor apărea aici.</p>
+        </nav>
+    </aside>
 
+    <main id="content" class="document">
+        <article>
+            <header class="article-header">
+                <span class="eyebrow">Power Query · Pivot Table</span>
+                <h1>Crearea de rapoarte automate în Excel</h1>
+                <p class="lead">Un ghid practic pentru conectarea la date, pregătirea listelor de filtrare și construirea rapoartelor care se actualizează ușor.</p>
+            </header>
+
+            <p>Dacă avem de întocmit periodic rapoarte cu aspect constant, care folosesc aceleași funcții, dar informațiile trebuie actualizate de fiecare dată, în Excel putem folosi instrumentul Power Query.</p>
+            <p>Întocmirea unui raport trece prin următoarele etape:</p>
+            <ol>
+                <li>Stabilirea informațiilor care trebuie să apară în raport și a formei de prezentare tabelară sau grafică.</li>
+                <li>Stabilirea sursei datelor: fișier text (CSV, TSV, JSON) sau Excel.</li>
+                <li>Conectarea la sursa de date cu Power Query.</li>
+                <li>Prelucrarea datelor cu formule, filtre sau pivotarea tabelelor.</li>
+                <li>Formatarea aspectului.</li>
+                <li>Reîmprospătarea ușoară a datelor.</li>
+            </ol>
+
+            <section>
+                <h2>Stabilirea sursei datelor</h2>
+                <p>Pentru exemplificare am ales setul de date <em>Air passenger transport routes between partner airports and main airports in Romania (avia_par_ro)</em>, care conține numărul de călători expediați de pe sau sosiți pe aeroporturile din România. Pentru acest exercițiu am prelucrat datele într-o formă mai simplă:</p>
+                <pre class="data-preview"><code>Data columns (total 13 columns):
+#    Column                  Non-Null Count  Dtype
+---  ------                  --------------  -----
+0    freq                    60562 non-null  str
+1    unit                    60562 non-null  str
+2    tra_meas                60562 non-null  str
+3    CountryCodeOrigin       60562 non-null  str
+4    CountryOrigin           60562 non-null  str
+5    AirportCodeOrigin       60562 non-null  str
+6    AirportOrigin           60562 non-null  str
+7    CountryCodeDestination  60562 non-null  str
+8    CountryDestination      60562 non-null  str
+9    AirportCodeDestination  60562 non-null  str
+10   AirportDestination      60562 non-null  str
+11   TIME_PERIOD             60562 non-null  str
+12   Passengers              60562 non-null  int64
+dtypes: int64(1), str(12)</code></pre>
+                <p>Fișierul de date pe care îl vom importa în Excel este <code>Estat_avia_par_ro_monthly_lt_2023.csv</code>.</p>
+            </section>
+
+            <section>
+                <h2>Legătura cu fișierul CSV</h2>
+                <p>Creăm un folder <code>Laborator_07</code>, în care vom lucra. Descărcăm fișierul <code>Estat_avia_par_ro_monthly_lt_2023.csv</code> și creăm un fișier Excel cu numele <code>AirPassengersRomania.xlsx</code>.</p>
+                <figure>
+                    <figcaption>Deschidem registrul și alegem <strong>Data → Get Data → From File → From Text/CSV</strong>.</figcaption>
+                    <img src="assets/document/image1.png" alt="Meniul Excel pentru importul unui fișier text sau CSV" loading="lazy">
+                </figure>
+                <figure>
+                    <figcaption>În fereastra de import selectăm fișierul CSV și apăsăm butonul <strong>Import</strong>.</figcaption>
+                    <img src="assets/document/image2.png" alt="Selectarea fișierului CSV în fereastra de import" loading="lazy">
+                </figure>
+                <figure>
+                    <figcaption>Se deschide fereastra Power Query de conectare la fișierul cu date.</figcaption>
+                    <img src="assets/document/image3.png" alt="Previzualizarea datelor CSV în fereastra de import Excel" loading="lazy">
+                </figure>
+            </section>
+
+            <section>
+                <h2>Prelucrarea datelor cu Power Query Editor</h2>
+                <p>Pentru a prelucra datele (schimbarea tipului datelor, filtrare, concatenare sau împărțire coloane) apăsăm butonul <strong>Transform Data</strong>. Se deschide fereastra Power Query Editor, un instrument pentru extragerea, transformarea și încărcarea datelor (ETL).</p>
+                <figure><img src="assets/document/image4.png" alt="Editorul Power Query cu datele importate" loading="lazy"></figure>
+                <p>După transformarea datelor închidem interogarea din <strong>Close &amp; Load → Close &amp; Load To…</strong>. Se deschide fereastra de import:</p>
+                <figure><img src="assets/document/image5.png" alt="Opțiunile de încărcare a datelor din Power Query" loading="lazy"></figure>
+                <p>Alegem să importăm datele într-un tabel, în foaia de lucru existentă. Datele importate într-un tabel pot fi accesate direct, fără adresarea lor prin rânduri și coloane. Un tabel Excel permite accesul la coloane prin referințe structurate de tipul <code>NumeTabel[NumeColoană]</code>.</p>
+                <figure><img src="assets/document/image6.png" alt="Importarea datelor ca tabel într-o foaie de lucru existentă" loading="lazy"></figure>
+                <p>Redenumim tabelul de date în <code>PassengersTable</code> și foaia de lucru curentă în <code>TableDataSheet</code>.</p>
+            </section>
+
+            <section>
+                <h2>Coloanele auxiliare</h2>
+                <p>În foaia de lucru <code>TableDataSheet</code> adăugăm două coloane ajutătoare: <code>Month</code>, în coloana N, și <code>Year</code>, în coloana O, pentru a extrage luna și anul din data din coloana <code>TIME_PERIOD</code>.</p>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Adresă</th><th>Formulă</th></tr></thead>
+                        <tbody>
+                            <tr><td>N2</td><td><pre><code class="language-excel">=PROPER(TEXT([@[TIME_PERIOD]]; "MMMM"))</code></pre></td></tr>
+                            <tr><td>O2</td><td><pre><code class="language-excel">=YEAR([@[TIME_PERIOD]])</code></pre></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Coloanele <code>Month</code> și <code>Year</code> devin componente ale tabelului <code>PassengersTable</code>.</p>
+            </section>
+
+            <section>
+                <h2>Listele auxiliare</h2>
+                <p>Adăugăm o foaie de lucru numită <code>HelperSheet</code>, în care vom crea liste intermediare ce vor fi de ajutor la selecția parametrilor de filtrare în raportul final:</p>
+                <ul>
+                    <li>Scriem etichetele pentru liste în celulele B3, C3, D3 și E3: <code>AirportOrigin</code>, <code>Countries</code>, <code>AirportDestination</code>, <code>Year</code>.</li>
+                    <li>În celulele B4, C4, D4 și E4 scriem formulele care vor genera listele:</li>
+                </ul>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Adresă</th><th>Formulă</th></tr></thead>
+                        <tbody>
+                            <tr><td>B4</td><td><pre><code class="language-excel">=UNIQUE(PassengersTable[AirportOrigin])</code></pre></td></tr>
+                            <tr><td>C4</td><td><pre><code class="language-excel">=SORT(UNIQUE(PassengersTable[CountryDestination]))</code></pre></td></tr>
+                            <tr><td>D4</td><td><pre><code class="language-excel">=UNIQUE(PassengersTable[AirportDestination])</code></pre></td></tr>
+                            <tr><td>E4</td><td><pre><code class="language-excel">=UNIQUE(PassengersTable[Year])</code></pre></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2>Foaia de lucru pentru raport</h2>
+                <section>
+                    <h3>Filtrele raportului dinamic</h3>
+                    <p>Adăugăm foaia de lucru <code>Report</code> și scriem etichetele listelor de filtrare:</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Adresă</th><th>Text</th></tr></thead>
+                            <tbody>
+                                <tr><td>B4</td><td>AirportOrigin:</td></tr>
+                                <tr><td>B5</td><td>Countries:</td></tr>
+                                <tr><td>B6</td><td>AirportDestination:</td></tr>
+                                <tr><td>B7</td><td>Year:</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>La adresele C4, C5, C6 și C7 adăugăm listele de filtrare:</p>
+                    <ul>
+                        <li>Selectăm C4, alegem <strong>Data Validation</strong>, apoi <strong>Allow: List</strong> și <strong>Source: =HelperSheet!$B$4#</strong>.</li>
+                        <li>Pentru C5, sursa listei este <code>=HelperSheet!$C$4#</code>.</li>
+                        <li>Pentru C6, sursa listei este <code>=HelperSheet!$D$4#</code>.</li>
+                        <li>Pentru C7, sursa listei este <code>=HelperSheet!$E$4#</code>.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>Tabelul raportului cu formula de filtrare</h3>
+                    <p>Scriem titlurile coloanelor din raport (copiate din <code>TableDataSheet</code>) în celulele B9–P9:</p>
+                    <p class="column-list">freq, unit, tra_meas, CountryCodeOrigin, CountryOrigin, AirportCodeOrigin, AirportOrigin, CountryCodeDestination, CountryDestination, AirportCodeDestination, AirportDestination, TIME_PERIOD, Passengers, Month, Year</p>
+                    <p>Adăugăm formula de filtrare a datelor din <code>PassengersTable</code>, cu parametrii aleși în listele construite cu Data Validation:</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Adresă</th><th>Formulă</th></tr></thead>
+                            <tbody><tr><td>B10</td><td><pre><code class="language-excel">=FILTER(PassengersTable; ((PassengersTable[AirportOrigin]=C4)* (PassengersTable[CountryDestination]=C5)* (PassengersTable[AirportDestination]=C6)* (PassengersTable[Year]=C7));"No data")</code></pre></td></tr></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section>
+                    <h3>Liste de filtrare „în cascadă”</h3>
+                    <p>Comportamentul listelor Data Validation din foaia <code>Report</code> poate fi îmbunătățit: în <code>Countries</code> afișăm numai țările către care au avut loc zboruri, în <code>AirportDestination</code> numai aeroporturile din țara aleasă anterior, iar în lista <code>Year</code> numai anii în care au avut loc zboruri pentru parametrii selectați anterior (cascading dropdown). Modificăm formulele din listele de pe foaia <code>HelperSheet</code>:</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Adresă</th><th>Formulă</th></tr></thead>
+                            <tbody>
+                                <tr><td>B4</td><td><pre><code class="language-excel">=UNIQUE(PassengersTable[AirportOrigin])</code></pre></td></tr>
+                                <tr><td>C4</td><td><pre><code class="language-excel">=SORT(UNIQUE(FILTER(PassengersTable[CountryDestination]; PassengersTable[AirportOrigin]=Report!$C$4)))</code></pre></td></tr>
+                                <tr><td>D4</td><td><pre><code class="language-excel">=UNIQUE(FILTER(PassengersTable[AirportDestination]; PassengersTable[CountryDestination]=Report!$C$5))</code></pre></td></tr>
+                                <tr><td>E4</td><td><pre><code class="language-excel">=UNIQUE(FILTER(PassengersTable[Year]; ((PassengersTable[CountryDestination]=Report!$C$5)* (PassengersTable[AirportOrigin]=Report!$C$4)* (PassengersTable[AirportDestination]=Report!$C$6))))</code></pre></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <section>
+                    <h3>Formatarea paginii raportului</h3>
+                    <ol>
+                        <li>Ascundem coloanele care nu sunt necesare.<figure><img src="assets/document/image7.png" alt="Coloanele inutile ascunse în raport" loading="lazy"></figure></li>
+                        <li>Stabilim formatul paginii.<figure><img src="assets/document/image8.png" alt="Configurarea formatului paginii raportului" loading="lazy"></figure></li>
+                        <li>Adăugăm numărul de pagină la subsolul paginii.<figure><img src="assets/document/image9.png" alt="Adăugarea numărului de pagină în subsol" loading="lazy"></figure></li>
+                        <li>Formatăm celulele cu borduri.<figure><img src="assets/document/image10.png" alt="Formatarea celulelor raportului cu borduri" loading="lazy"></figure></li>
+                    </ol>
+                    <p>La tipărire, raportul arată astfel:</p>
+                    <figure><img src="assets/document/image11.png" alt="Aspectul raportului Excel la tipărire" loading="lazy"></figure>
+                </section>
+            </section>
+
+            <section>
+                <h2>Împrospătarea datelor</h2>
+                <p>Unul dintre avantajele folosirii Power Query este că, dacă se modifică datele din fișierul CSV, putem împrospăta raportul cu un clic pe butonul <strong>Refresh</strong> din fila <strong>Data</strong>.</p>
+                <figure><img src="assets/document/image12.png" alt="Butonul Refresh pentru actualizarea datelor" loading="lazy"></figure>
+            </section>
+
+            <section>
+                <h2>Rapoarte cu Pivot Table</h2>
+                <p>Pivotarea unui tabel transformă valorile distincte dintr-una sau mai multe coloane din tabelul sursă în coloane sau rânduri în tabelul pivotat. La intersecția acestora se găsesc valori agregate (sum, count etc.), calculate din alte coloane ale tabelului sursă.</p>
+                <figure>
+                    <figcaption>Cu pagina activă <code>Report</code>, din fila <strong>Insert</strong> alegem <strong>PivotTable → From Table/Range</strong>.</figcaption>
+                    <img src="assets/document/image13.png" alt="Crearea unui PivotTable din tabelul raportului" loading="lazy">
+                </figure>
+                <figure>
+                    <figcaption>În fereastra PivotTable se alege <strong>New Worksheet</strong>.</figcaption>
+                    <img src="assets/document/image14.png" alt="Selectarea unei foi noi pentru tabelul pivot" loading="lazy">
+                </figure>
+                <figure>
+                    <figcaption>Se generează o foaie de calcul nouă și se deschide fereastra de opțiuni pentru construirea tabelului pivot. Aici alegem coloanele care devin coloane sau rânduri, precum și coloanele cărora li se aplică funcții de agregare.</figcaption>
+                    <img src="assets/document/image15.png" alt="Opțiunile de câmpuri pentru construirea tabelului pivot" loading="lazy">
+                </figure>
+                <p>Redenumim noua foaie de lucru în <code>Summary</code>.</p>
+                <p>Completăm următoarele formule:</p>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Adresă</th><th>Formulă</th></tr></thead>
+                        <tbody>
+                            <tr><td>A1</td><td><pre><code class="language-excel">=CONCATENATE(Report!C4;" --&gt; ";Report!C6)</code></pre></td></tr>
+                            <tr><td>A2</td><td><pre><code class="language-excel">=Report!C7</code></pre></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <figure>
+                    <figcaption>Forma finală a raportului pivot:</figcaption>
+                    <img src="assets/document/image16.png" alt="Raportul pivot final în Excel" loading="lazy">
+                </figure>
+            </section>
+            <footer class="article-footer">Sfârșitul documentului</footer>
+        </article>
+    </main>
+</body>
 </html>
