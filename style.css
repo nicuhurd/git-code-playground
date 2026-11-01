@@ -1,6 +1,200 @@
+:root {
+    color-scheme: dark;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    --page: #10141d;
+    --sidebar: #151b26;
+    --surface: #1a2230;
+    --border: #2b3545;
+    --text: #e6edf7;
+    --muted: #9ba9bc;
+    --accent: #82b4ff;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
 body {
-    background-color: #333;
-    color: whitesmoke;
     display: grid;
-    place-content: center;
+    grid-template-columns: minmax(230px, 290px) minmax(0, 1fr);
+    margin: 0;
+    overflow: hidden;
+    background: var(--page);
+    color: var(--text);
+}
+
+a { color: var(--accent); }
+a:hover { color: #b6d2ff; }
+
+.skip-link {
+    position: fixed;
+    z-index: 5;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.7rem 1rem;
+    transform: translateY(-160%);
+    border-radius: 0.5rem;
+    background: var(--accent);
+    color: #10141d;
+}
+.skip-link:focus { transform: translateY(0); }
+
+.sidebar {
+    min-height: 0;
+    overflow-y: auto;
+    padding: 2rem 1.25rem 2rem 1.75rem;
+    border-right: 1px solid var(--border);
+    background: var(--sidebar);
+    scrollbar-color: #46536a transparent;
+}
+
+.sidebar-heading { margin: 0 0 1.2rem; }
+.sidebar-heading h2 { margin: 0.3rem 0 0; font-size: 1.35rem; }
+.eyebrow {
+    color: var(--accent);
+    font-size: 0.74rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+#table-of-contents ul { margin: 0; padding: 0; list-style: none; }
+#table-of-contents li { margin: 0.12rem 0; }
+#table-of-contents a {
+    display: block;
+    padding: 0.44rem 0.62rem;
+    border-radius: 0.45rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    text-decoration: none;
+}
+#table-of-contents a:hover,
+#table-of-contents a:focus-visible {
+    background: #222c3b;
+    color: var(--text);
+}
+#table-of-contents .toc-subsection a {
+    padding-left: 1.35rem;
+    font-size: 0.83rem;
+}
+.toc-placeholder { color: var(--muted); font-size: 0.88rem; }
+
+.document {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    padding: clamp(1.5rem, 5vw, 4.5rem);
+    scrollbar-color: #46536a transparent;
+    scroll-behavior: smooth;
+}
+
+article { width: min(100%, 900px); margin: 0 auto; }
+.article-header {
+    margin: 0 0 2.5rem;
+    padding: 0 0 1.8rem;
+    border-bottom: 1px solid var(--border);
+}
+h1, h2, h3 { color: #f5f8ff; line-height: 1.25; }
+h1 { max-width: 750px; margin: 0.65rem 0 1rem; font-size: clamp(2rem, 5vw, 3.25rem); letter-spacing: -0.035em; }
+h2 { margin: 2.8rem 0 1rem; font-size: clamp(1.55rem, 3vw, 2rem); letter-spacing: -0.025em; }
+h3 { margin: 2rem 0 0.8rem; font-size: 1.3rem; }
+section section h3 { margin-top: 1.8rem; }
+p, li { color: #cbd5e4; line-height: 1.75; }
+p { margin: 0.85rem 0; }
+li { padding-left: 0.2rem; margin: 0.35rem 0; }
+ol, ul { padding-left: 1.4rem; }
+.lead { max-width: 720px; margin: 0; color: var(--muted); font-size: 1.15rem; line-height: 1.7; }
+article > p, section > p { max-width: 78ch; }
+
+code:not(pre code) {
+    padding: 0.12em 0.35em;
+    border: 1px solid var(--border);
+    border-radius: 0.3rem;
+    background: #1b2432;
+    color: #c6dcff;
+    font-size: 0.9em;
+    overflow-wrap: anywhere;
+}
+pre {
+    margin: 0;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.55rem;
+    background: #0d1117;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    tab-size: 4;
+}
+pre code {
+    display: block;
+    min-width: max-content;
+    padding: 1rem 1.1rem;
+    color: #e6edf3;
+    background: transparent;
+}
+.hljs-string { color: #a5d6ff; }
+.hljs-variable, .hljs-built_in { color: #ffa657; }
+.hljs-symbol { color: #f0f6fc; }
+.hljs-title.function_ { color: #d2a8ff; }
+.hljs-number { color: #79c0ff; }
+.hljs-operator { color: #ff7b72; }
+.data-preview { margin: 1.2rem 0; }
+
+.table-wrap {
+    width: 100%;
+    margin: 1.1rem 0 1.6rem;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+}
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.7rem 0.85rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+th { background: #202a39; color: #dce8f8; font-size: 0.88rem; }
+td { color: #cbd5e4; }
+tr:last-child td { border-bottom: 0; }
+td:first-child { width: 105px; white-space: nowrap; }
+td pre { min-width: 320px; border: 0; }
+td pre code { padding: 0.65rem 0.75rem; }
+.column-list { padding: 0.8rem 1rem; border-left: 3px solid #536c91; background: var(--surface); overflow-wrap: anywhere; }
+
+figure {
+    margin: 1.4rem 0 2rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.7rem;
+    background: var(--surface);
+}
+figure img { display: block; width: auto; max-width: 100%; max-height: 760px; height: auto; margin: 0 auto; object-fit: contain; }
+figcaption { margin: 0.25rem 0 0.8rem; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
+li figure { margin: 0.85rem 0 1.25rem; }
+.article-footer { margin-top: 4rem; padding: 1.5rem 0; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; }
+
+@media (max-width: 760px) {
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    .sidebar {
+        flex: 0 0 auto;
+        max-height: 36vh;
+        padding: 1rem 1rem 0.9rem;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .sidebar-heading { margin-bottom: 0.55rem; }
+    .sidebar-heading h2 { font-size: 1.1rem; }
+    #table-of-contents ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 0.1rem 0.3rem; }
+    #table-of-contents a { padding: 0.35rem 0.45rem; font-size: 0.82rem; }
+    #table-of-contents .toc-subsection a { padding-left: 0.8rem; font-size: 0.77rem; }
+    .document { flex: 1 1 0; padding: 1.5rem clamp(1rem, 5vw, 2rem) 3rem; }
+}
+
+@media (max-width: 420px) {
+    .sidebar { max-height: 32vh; }
+    .document { padding-inline: 1rem; }
+    th, td { padding: 0.6rem; }
+    pre { font-size: 0.82rem; }
 }
